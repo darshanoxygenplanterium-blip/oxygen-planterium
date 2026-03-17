@@ -22,6 +22,7 @@ export default function Products() {
         setProducts(data || [])
       } catch (error) {
         console.error('Error fetching products:', error)
+        setProducts([])
       }
     }
 
@@ -29,18 +30,36 @@ export default function Products() {
   }, [])
 
   function addToCart(product: any) {
-    const existing = cart.find((item) => item._id === product._id)
+    const existing = cart.find((item) => item?._id === product?._id)
 
     if (existing) {
       setCart(
         cart.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
+          item?._id === product?._id
+            ? { ...item, quantity: (item?.quantity || 0) + 1 }
             : item
         )
       )
     } else {
       setCart([...cart, { ...product, quantity: 1 }])
+    }
+  }
+
+  function removeFromCart(product: any) {
+    const existing = cart.find((item) => item?._id === product?._id)
+
+    if (!existing) return
+
+    if ((existing?.quantity || 0) === 1) {
+      setCart(cart.filter((item) => item?._id !== product?._id))
+    } else {
+      setCart(
+        cart.map((item) =>
+          item?._id === product?._id
+            ? { ...item, quantity: (item?.quantity || 1) - 1 }
+            : item
+        )
+      )
     }
   }
 
@@ -53,13 +72,13 @@ export default function Products() {
     let message = 'Hi, I want to order:\n\n'
 
     cart.forEach((item) => {
-      message += `🌿 ${item.name} x ${item.quantity} - ₹${
-        item.price * item.quantity
-      }\n`
+      const quantity = item?.quantity || 0
+      const price = item?.price || 0
+      message += `🌿 ${item?.name || 'Product'} x ${quantity} - ₹${price * quantity}\n`
     })
 
     const total = cart.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, item) => sum + (item?.price || 0) * (item?.quantity || 0),
       0
     )
 
@@ -72,9 +91,12 @@ export default function Products() {
   const filteredProducts =
     selectedCategory === 'all'
       ? products
-      : products.filter((p) => p.category === selectedCategory)
+      : products.filter((p) => p?.category === selectedCategory)
 
-  const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const totalCartItems = cart.reduce(
+    (sum, item) => sum + (item?.quantity || 0),
+    0
+  )
 
   return (
     <section
@@ -102,41 +124,68 @@ export default function Products() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-6">
-        {filteredProducts.map((product) => (
-          <div
-            key={product._id}
-            className="rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/30 shadow-md hover:shadow-2xl transition duration-500 group"
-          >
-            <div className="w-full h-40 md:h-56 flex items-center justify-center bg-white/50">
-              <img
-                src={
-                  product.image
-                    ? urlFor(product.image).url()
-                    : '/placeholder.png'
-                }
-                alt={product.name}
-                className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
-              />
+        {filteredProducts.map((product) => {
+          const cartItem = cart.find((item) => item?._id === product?._id)
+          const quantity = cartItem?.quantity || 0
+
+          return (
+            <div
+              key={product?._id}
+              className="rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/30 shadow-md hover:shadow-2xl transition duration-500 group"
+            >
+              <div className="w-full h-40 md:h-56 flex items-center justify-center bg-white/50">
+                <img
+                  src={
+                    product?.image
+                      ? urlFor(product.image).url()
+                      : '/placeholder.png'
+                  }
+                  alt={product?.name || 'Product image'}
+                  className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
+
+              <div className="p-3 md:p-5">
+                <h3 className="text-sm md:text-lg font-semibold text-gray-900">
+                  {product?.name || 'Unnamed Product'}
+                </h3>
+
+                <p className="text-green-800 font-bold mt-1 text-sm md:text-lg">
+                  ₹{product?.price || 0}
+                </p>
+
+                {quantity > 0 ? (
+                  <div className="mt-3 flex items-center justify-between bg-green-800 text-white rounded-xl px-3 py-1.5 md:py-2 shadow-md">
+                    <button
+                      onClick={() => removeFromCart(product)}
+                      className="text-lg md:text-xl font-bold px-2"
+                    >
+                      -
+                    </button>
+
+                    <span className="text-sm md:text-base font-semibold">
+                      {quantity}
+                    </span>
+
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="text-lg md:text-xl font-bold px-2"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => addToCart(product)}
+                    className="mt-3 w-full bg-gradient-to-r from-green-700 to-green-900 text-white py-1.5 md:py-2 rounded-xl text-sm md:text-base hover:scale-105 transition duration-300 shadow-md hover:shadow-xl"
+                  >
+                    Add to Cart
+                  </button>
+                )}
+              </div>
             </div>
-
-            <div className="p-3 md:p-5">
-              <h3 className="text-sm md:text-lg font-semibold text-gray-900">
-                {product.name}
-              </h3>
-
-              <p className="text-green-800 font-bold mt-1 text-sm md:text-lg">
-                ₹{product.price}
-              </p>
-
-              <button
-                onClick={() => addToCart(product)}
-                className="mt-3 w-full bg-gradient-to-r from-green-700 to-green-900 text-white py-1.5 md:py-2 rounded-xl text-sm md:text-base hover:scale-105 transition duration-300 shadow-md hover:shadow-xl"
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <button
