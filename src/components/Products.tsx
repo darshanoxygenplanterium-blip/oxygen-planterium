@@ -74,6 +74,8 @@ export default function Products() {
       ? products
       : products.filter((p) => p.category === selectedCategory)
 
+  const totalCartItems = cart.reduce((sum, item) => sum + item.quantity, 0)
+
   return (
     <section
       id="products"
@@ -83,7 +85,6 @@ export default function Products() {
         Our Plants 🌿
       </h2>
 
-      {/* CATEGORY FILTER */}
       <div className="flex justify-center gap-3 mb-10 flex-wrap px-4">
         {['all', 'indoor', 'outdoor', 'fruiting', 'flowering'].map((cat) => (
           <button
@@ -100,14 +101,12 @@ export default function Products() {
         ))}
       </div>
 
-      {/* PRODUCTS GRID */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-6">
         {filteredProducts.map((product) => (
           <div
             key={product._id}
             className="rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/30 shadow-md hover:shadow-2xl transition duration-500 group"
           >
-            {/* IMAGE */}
             <div className="w-full h-40 md:h-56 flex items-center justify-center bg-white/50">
               <img
                 src={
@@ -120,7 +119,6 @@ export default function Products() {
               />
             </div>
 
-            {/* CONTENT */}
             <div className="p-3 md:p-5">
               <h3 className="text-sm md:text-lg font-semibold text-gray-900">
                 {product.name}
@@ -141,12 +139,11 @@ export default function Products() {
         ))}
       </div>
 
-      {/* WHATSAPP ORDER BUTTON */}
       <button
         onClick={sendToWhatsApp}
         className="fixed bottom-6 right-6 bg-green-800 text-white px-5 py-3 rounded-full shadow-lg hover:bg-green-900 transition z-50"
       >
-        Order Now 🛒 ({cart.length})
+        Order Now 🛒 ({totalCartItems})
       </button>
     </section>
   )
