@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
 import Products from "@/components/Products";
+import Reviews from "@/components/Reviews";
 import Location from "@/components/Location";
 import Footer from "@/components/Footer";
 
@@ -30,6 +31,8 @@ export default function Home() {
           <Products />
         </div>
       </section>
+
+      <Reviews />
 
       {/* Location */}
       <section className="py-16 bg-white">
