@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Categories from "@/components/Categories";
-import Products from "@/components/Products";
+import BestSellers from "@/components/BestSellers";
 import Reviews from "@/components/Reviews";
 import Location from "@/components/Location";
 import Footer from "@/components/Footer";
@@ -25,13 +25,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Products */}
+      {/* Best Sellers (REPLACES PRODUCTS) */}
       <section className="py-20 bg-gradient-to-b from-[#eef5ec] to-[#e6efe9]">
         <div className="max-w-7xl mx-auto px-6">
-          <Products />
+          <BestSellers />
         </div>
       </section>
 
+      {/* Reviews */}
       <Reviews />
 
       {/* Location */}
