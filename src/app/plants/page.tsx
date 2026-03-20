@@ -343,14 +343,14 @@ export default function PlantsPage() {
 
       {showCheckout && (
         <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-5 md:p-6 max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-lg bg-white text-gray-900 rounded-2xl shadow-2xl p-5 md:p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl md:text-2xl font-semibold text-gray-900">
                 Checkout Details
               </h3>
               <button
                 onClick={() => setShowCheckout(false)}
-                className="text-gray-600 text-xl font-bold px-2"
+                className="text-gray-800 text-xl font-bold px-2"
               >
                 ×
               </button>
@@ -362,7 +362,7 @@ export default function PlantsPage() {
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Full Name"
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200 text-gray-900 placeholder-gray-500"
               />
 
               <input
@@ -370,7 +370,7 @@ export default function PlantsPage() {
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 placeholder="Phone Number"
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200 text-gray-900 placeholder-gray-500"
               />
 
               <textarea
@@ -378,7 +378,7 @@ export default function PlantsPage() {
                 onChange={(e) => setCustomerAddress(e.target.value)}
                 placeholder="Delivery Address"
                 rows={3}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700 resize-none"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200 text-gray-900 placeholder-gray-500 resize-none"
               />
 
               <textarea
@@ -386,7 +386,7 @@ export default function PlantsPage() {
                 onChange={(e) => setCustomerNotes(e.target.value)}
                 placeholder="Notes (Optional)"
                 rows={2}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700 resize-none"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-green-700 focus:ring-2 focus:ring-green-200 text-gray-900 placeholder-gray-500 resize-none"
               />
 
               <div className="rounded-2xl bg-[#f7faf7] border border-green-100 p-4">
