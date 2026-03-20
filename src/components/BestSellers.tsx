@@ -92,7 +92,7 @@ export default function BestSellers() {
       </h2>
 
       <p className="text-center text-gray-600 mb-8 md:mb-10 px-4">
-        Explore our top 8 customer favorites
+        Discover our most popular plants, loved by our customers for their beauty and ease of care. These best sellers are sure to bring joy and greenery to your space.
       </p>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-3 md:px-6">
