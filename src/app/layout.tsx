@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     title: "Oxygen Planterium | Plants in Hubli",
     description:
       "Premium plant store in Hubli for indoor & outdoor plants, pots and gardening services.",
-    url: "https://your-domain.com",
+    url: "https://oxygenplanterium.com",
     siteName: "Oxygen Planterium",
     locale: "en_IN",
     type: "website",
@@ -46,7 +47,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
