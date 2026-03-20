@@ -40,7 +40,7 @@ export default function BestSellers() {
   return (
     <section
       id="products"
-      className="py-16 scroll-mt-28 md:scroll-mt-32 bg-gradient-to-br from-[#f5f1e8] via-[#eef5ec] to-[#e6efe9]"
+      className="py-16 scroll-mt-14 md:scroll-mt-16 bg-gradient-to-br from-[#f5f1e8] via-[#eef5ec] to-[#e6efe9]"
     >
       <h2 className="text-3xl md:text-4xl font-serif text-center mb-4 text-gray-800">
         Our Best Sellers 🌿
