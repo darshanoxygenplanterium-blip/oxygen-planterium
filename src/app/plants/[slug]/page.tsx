@@ -1,6 +1,10 @@
-import Link from 'next/link'
-import imageUrlBuilder from '@sanity/image-url'
+'use client'
+
+import { useEffect, useState } from 'react'
 import { client } from '@/sanity/lib/client'
+import imageUrlBuilder from '@sanity/image-url'
+import { useCart } from '@/context/CartContext'
+import { Sun, Droplets, Ruler, Flower2, ShieldCheck } from 'lucide-react'
 
 const builder = imageUrlBuilder(client)
 
@@ -18,138 +22,152 @@ async function getPlant(slug: string) {
       category,
       description,
       image,
-      images
+      images,
+      height,
+      potSize,
+      light,
+      water
     }`,
     { slug }
   )
 }
 
-export default async function PlantDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>
-}) {
-  const { slug } = await params
+export default function PlantPage({ params }: any) {
+  const [plant, setPlant] = useState<any>(null)
+  const [selectedImage, setSelectedImage] = useState<any>(null)
 
-  if (!slug) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8] px-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-serif text-gray-800 mb-4">Invalid plant link</h1>
-          <Link
-            href="/plants"
-            className="inline-block bg-green-800 text-white px-6 py-3 rounded-full"
-          >
-            Back to Plants
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  const { addToCart } = useCart()
 
-  const plant = await getPlant(slug)
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getPlant(params.slug)
+      setPlant(data)
+      setSelectedImage(data?.image)
+    }
+    fetchData()
+  }, [params.slug])
 
-  if (!plant) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f1e8] px-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-serif text-gray-800 mb-4">Plant not found</h1>
-          <Link
-            href="/plants"
-            className="inline-block bg-green-800 text-white px-6 py-3 rounded-full"
-          >
-            Back to Plants
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
-  const allImages = [plant.image, ...(plant.images || [])].filter(Boolean)
+  if (!plant) return <div className="p-10 text-center">Loading...</div>
 
   return (
-    <section className="min-h-screen bg-gradient-to-br from-[#f5f1e8] via-[#eef5ec] to-[#e6efe9] py-16 px-4 md:px-6">
-      <div className="max-w-7xl mx-auto">
-        <Link
-          href="/plants"
-          className="inline-block mb-8 text-green-800 font-medium hover:underline"
-        >
-          ← Back to All Plants
-        </Link>
+    <section className="min-h-screen bg-[#f5f1e8] py-10 px-4 md:px-10">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10">
 
-        <div className="grid md:grid-cols-2 gap-10 items-start">
-          <div>
-            <div className="rounded-3xl overflow-hidden bg-white shadow-lg p-4">
-              <img
-                src={
-                  plant?.image
-                    ? urlFor(plant.image).width(800).url()
-                    : '/placeholder.png'
-                }
-                alt={plant?.name || 'Plant image'}
-                className="w-full h-[320px] md:h-[500px] object-contain"
-              />
-            </div>
-
-            {allImages.length > 1 && (
-              <div className="grid grid-cols-3 gap-4 mt-4">
-                {allImages.map((img: any, index: number) => (
-                  <div
-                    key={index}
-                    className="rounded-2xl overflow-hidden bg-white shadow p-2"
-                  >
-                    <img
-                      src={urlFor(img).width(300).url()}
-                      alt={`${plant?.name || 'Plant'} ${index + 1}`}
-                      className="w-full h-28 object-contain"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* IMAGE SECTION */}
+        <div>
+          <div className="rounded-3xl bg-white p-4 shadow-md">
+            <img
+              src={urlFor(selectedImage).url()}
+              alt={plant.name}
+              className="w-full h-[300px] md:h-[450px] object-contain"
+            />
           </div>
 
-          <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg p-6 md:p-8">
-            <p className="text-sm uppercase tracking-wide text-green-800 font-semibold mb-2">
-              {plant?.category || 'Plant'}
-            </p>
+          {/* THUMBNAILS */}
+          {plant?.images?.length > 0 && (
+            <div className="flex gap-3 mt-4 flex-wrap">
+              {[plant.image, ...(plant.images || [])].map((img: any, i: number) => (
+                <img
+                  key={i}
+                  src={urlFor(img).url()}
+                  alt="thumb"
+                  onClick={() => setSelectedImage(img)}
+                  className={`w-16 h-16 object-cover rounded-xl cursor-pointer border ${
+                    selectedImage === img
+                      ? 'border-green-700'
+                      : 'border-gray-200'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
-            <h1 className="text-3xl md:text-5xl font-serif text-gray-900 mb-4">
-              {plant?.name || 'Unnamed Plant'}
-            </h1>
+        {/* DETAILS SECTION */}
+        <div>
+          <h1 className="text-2xl md:text-4xl font-serif text-gray-900">
+            {plant.name}
+          </h1>
 
-            <p className="text-2xl md:text-3xl font-bold text-green-800 mb-6">
-              ₹{plant?.price || 0}
-            </p>
+          <p className="text-green-800 text-xl md:text-2xl font-bold mt-3">
+            ₹{plant.price}
+          </p>
 
-            <div className="border-t border-b border-gray-200 py-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">
-                Description
-              </h2>
-              <p className="text-gray-700 leading-8 whitespace-pre-line">
-                {plant?.description || 'No description available for this plant yet.'}
+          <p className="text-gray-600 mt-4 leading-6">
+            {plant.description || 'Beautiful plant for your home.'}
+          </p>
+
+          {/* ADD TO CART */}
+          <button
+            onClick={() => addToCart(plant)}
+            className="mt-6 w-full bg-green-800 text-white py-3 rounded-xl shadow-md hover:bg-green-900 transition"
+          >
+            Add to Cart 🛒
+          </button>
+
+          {/* PREMIUM PLANT DETAILS */}
+          <div className="mt-8 rounded-3xl border border-green-100 bg-white/80 backdrop-blur-md shadow-lg overflow-hidden">
+
+            <div className="px-5 py-4 border-b border-green-100 bg-[#eef8f0]">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Flower2 className="w-5 h-5 text-green-700" />
+                Plant Details
+              </h3>
+            </div>
+
+            <div className="p-5 grid grid-cols-2 gap-4">
+
+              <div className="flex gap-3">
+                <Ruler className="text-green-700" />
+                <div>
+                  <p className="text-xs text-gray-500">Height</p>
+                  <p className="font-semibold">
+                    {plant?.height || '20–30 cm'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Flower2 className="text-green-700" />
+                <div>
+                  <p className="text-xs text-gray-500">Pot Size</p>
+                  <p className="font-semibold">
+                    {plant?.potSize || '5 inch'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Sun className="text-green-700" />
+                <div>
+                  <p className="text-xs text-gray-500">Light</p>
+                  <p className="font-semibold">
+                    {plant?.light || 'Indirect sunlight'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Droplets className="text-green-700" />
+                <div>
+                  <p className="text-xs text-gray-500">Water</p>
+                  <p className="font-semibold">
+                    {plant?.water || '2–3 times a week'}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            {/* DISCLAIMER */}
+            <div className="bg-[#f3faf5] p-4 border-t border-green-100 flex gap-3">
+              <ShieldCheck className="text-green-700" />
+              <p className="text-xs text-gray-600">
+                Plants are natural products. Size and appearance may vary
+                slightly from images.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/plants"
-                className="text-center border border-green-800 text-green-800 px-6 py-3 rounded-full hover:bg-green-50 transition"
-              >
-                Continue Shopping
-              </Link>
-
-              <a
-                href={`https://wa.me/919380329328?text=${encodeURIComponent(
-                  `Hi, I want to enquire about this plant:\n\n🌿 ${plant?.name}\n💰 Price: ₹${plant?.price}\n📂 Category: ${plant?.category}\n\nPlease share more details.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-center bg-green-800 text-white px-6 py-3 rounded-full hover:bg-green-900 transition"
-              >
-                Enquire on WhatsApp
-              </a>
-            </div>
           </div>
         </div>
       </div>
