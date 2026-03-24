@@ -68,6 +68,30 @@ export default defineType({
       ],
     }),
     defineField({
+      name: 'height',
+      title: 'Plant Height',
+      type: 'string',
+      description: 'Example: 20–30 cm',
+    }),
+    defineField({
+      name: 'potSize',
+      title: 'Pot Size',
+      type: 'string',
+      description: 'Example: 5 inch',
+    }),
+    defineField({
+      name: 'light',
+      title: 'Light Requirement',
+      type: 'string',
+      description: 'Example: Indirect sunlight',
+    }),
+    defineField({
+      name: 'water',
+      title: 'Watering',
+      type: 'string',
+      description: 'Example: 2–3 times a week',
+    }),
+    defineField({
       name: 'bestSeller',
       title: 'Best Seller',
       type: 'boolean',

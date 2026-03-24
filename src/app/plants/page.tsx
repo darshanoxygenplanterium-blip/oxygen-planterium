@@ -83,16 +83,15 @@ export default function PlantsPage() {
         {filteredProducts.map((product) => {
           const cartItem = cart.find((item) => item?._id === product?._id)
           const quantity = cartItem?.quantity || 0
-          const productHref = product?.slug?.current
-            ? `/plants/${product.slug.current}`
-            : '#'
+          const hasSlug = !!product?.slug?.current
+          const productHref = hasSlug ? `/plants/${product.slug.current}` : '#'
 
           return (
             <div
               key={product?._id}
               className="rounded-xl md:rounded-2xl overflow-hidden bg-white/60 backdrop-blur-xl border border-white/30 shadow-md hover:shadow-2xl transition duration-500 group"
             >
-              {product?.slug?.current ? (
+              {hasSlug ? (
                 <Link href={productHref}>
                   <div className="w-full h-28 sm:h-32 md:h-56 flex items-center justify-center bg-white/50 cursor-pointer">
                     <img
@@ -121,7 +120,7 @@ export default function PlantsPage() {
               )}
 
               <div className="p-2 sm:p-3 md:p-5">
-                {product?.slug?.current ? (
+                {hasSlug ? (
                   <Link href={productHref}>
                     <h3 className="text-xs sm:text-sm md:text-lg font-semibold text-gray-900 cursor-pointer hover:text-green-800 transition leading-tight">
                       {product?.name || 'Unnamed Product'}
