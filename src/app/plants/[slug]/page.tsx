@@ -174,8 +174,8 @@ export default async function PlantPage({
             {/* DISCLAIMER */}
             <div className="bg-[#f3faf5] p-4 border-t border-green-100 flex gap-3">
               <ShieldCheck className="text-green-700" />
-              <p className="text-xs text-gray-600">
-                Plants are natural products. Size and appearance may vary slightly from images.
+              <p className="text-xs text-gray-500 italic leading-relaxed">
+                Plants Are Natural Products. Size And Appearance May Vary Slightly From Images.
               </p>
             </div>
 
