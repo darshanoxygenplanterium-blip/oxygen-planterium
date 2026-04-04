@@ -17,6 +17,9 @@ export default function PlantsPage() {
   const [products, setProducts] = useState<any[]>([])
   const [selectedCategory, setSelectedCategory] = useState('all')
 
+  // ✅ SEARCH STATE
+  const [search, setSearch] = useState('')
+
   const {
     cart,
     addToCart,
@@ -48,27 +51,47 @@ export default function PlantsPage() {
     fetchProducts()
   }, [])
 
-  const filteredProducts =
-    selectedCategory === 'all'
-      ? products
-      : products.filter((p) => p?.category === selectedCategory)
+  // ✅ UPDATED FILTER (CATEGORY + SEARCH)
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory =
+      selectedCategory === 'all' || p?.category === selectedCategory
+
+    const matchesSearch = p?.name
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+
+    return matchesCategory && matchesSearch
+  })
 
   return (
     <section className="py-16 min-h-screen bg-gradient-to-br from-[#f5f1e8] via-[#eef5ec] to-[#e6efe9]">
+      
       <h1 className="text-3xl md:text-5xl font-serif text-center mb-4 text-gray-800">
         All Plants 🌿
       </h1>
 
-      <p className="text-center text-gray-600 mb-8 md:mb-10 px-4">
+      <p className="text-center text-gray-600 mb-6 px-4">
         Explore all our indoor, outdoor, flowering and fruiting plants
       </p>
 
+      {/* ✅ SEARCH BAR */}
+      <div className="flex justify-center mb-6 px-4">
+        <input
+          type="text"
+          placeholder="Search plants..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-xl px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-700"
+        />
+      </div>
+
+      {/* CATEGORY */}
       <div className="flex justify-center gap-2 md:gap-3 mb-8 md:mb-10 flex-wrap px-4">
         {['all', 'indoor', 'outdoor', 'fruiting', 'flowering'].map((cat) => (
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-3 md:px-4 py-2 text-xs sm:text-sm md:text-base rounded-full border transition backdrop-blur-md ${
+            className={`px-3 md:px-4 py-2 text-xs sm:text-sm md:text-base rounded-full border transition ${
               selectedCategory === cat
                 ? 'bg-green-800 text-white shadow-md'
                 : 'bg-white/60 text-gray-700 hover:bg-white'
@@ -79,6 +102,7 @@ export default function PlantsPage() {
         ))}
       </div>
 
+      {/* PRODUCTS */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 px-3 md:px-6">
         {filteredProducts.map((product) => {
           const cartItem = cart.find((item) => item?._id === product?._id)
@@ -120,50 +144,28 @@ export default function PlantsPage() {
               )}
 
               <div className="p-2 sm:p-3 md:p-5">
-                {hasSlug ? (
-                  <Link href={productHref}>
-                    <h3 className="text-xs sm:text-sm md:text-lg font-semibold text-gray-900 cursor-pointer hover:text-green-800 transition leading-tight">
-                      {product?.name || 'Unnamed Product'}
-                    </h3>
-                  </Link>
-                ) : (
-                  <h3 className="text-xs sm:text-sm md:text-lg font-semibold text-gray-900 leading-tight">
-                    {product?.name || 'Unnamed Product'}
-                  </h3>
-                )}
+                <h3 className="text-xs sm:text-sm md:text-lg font-semibold text-gray-900">
+                  {product?.name}
+                </h3>
 
                 <p className="text-green-800 font-bold mt-1 text-sm md:text-lg">
-                  ₹{product?.price || 0}
+                  ₹{product?.price}
                 </p>
 
                 <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 mt-1 capitalize">
-                  {product?.category || 'plant'}
+                  {product?.category}
                 </p>
 
                 {quantity > 0 ? (
-                  <div className="mt-2 flex items-center justify-between bg-green-800 text-white rounded-lg md:rounded-xl px-2 py-1 md:px-3 md:py-2 shadow-md">
-                    <button
-                      onClick={() => removeFromCart(product)}
-                      className="text-base md:text-xl font-bold px-1 md:px-2"
-                    >
-                      -
-                    </button>
-
-                    <span className="text-xs sm:text-sm md:text-base font-semibold">
-                      {quantity}
-                    </span>
-
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="text-base md:text-xl font-bold px-1 md:px-2"
-                    >
-                      +
-                    </button>
+                  <div className="mt-2 flex items-center justify-between bg-green-800 text-white rounded-lg md:rounded-xl px-2 py-1 md:px-3 md:py-2">
+                    <button onClick={() => removeFromCart(product)}>-</button>
+                    <span>{quantity}</span>
+                    <button onClick={() => addToCart(product)}>+</button>
                   </div>
                 ) : (
                   <button
                     onClick={() => addToCart(product)}
-                    className="mt-2 w-full bg-gradient-to-r from-green-700 to-green-900 text-white py-1.5 md:py-2 rounded-lg md:rounded-xl text-xs sm:text-sm md:text-base hover:scale-105 transition duration-300 shadow-md hover:shadow-xl"
+                    className="mt-2 w-full bg-green-800 text-white py-2 rounded-lg"
                   >
                     Add
                   </button>
@@ -174,6 +176,13 @@ export default function PlantsPage() {
         })}
       </div>
 
+      {/* ✅ EMPTY STATE */}
+      {filteredProducts.length === 0 && (
+        <p className="text-center mt-6 text-gray-600">
+          No plants found 🌿
+        </p>
+      )}
+
       <button
         onClick={() => {
           if (cart.length === 0) {
@@ -182,7 +191,7 @@ export default function PlantsPage() {
           }
           setShowCheckout(true)
         }}
-        className="fixed bottom-5 right-4 md:bottom-6 md:right-6 bg-green-800 text-white px-4 md:px-5 py-2.5 md:py-3 rounded-full shadow-lg hover:bg-green-900 transition z-50 text-sm md:text-base"
+        className="fixed bottom-5 right-4 md:bottom-6 md:right-6 bg-green-800 text-white px-4 md:px-5 py-2.5 md:py-3 rounded-full shadow-lg"
       >
         Order Now 🛒 ({totalCartItems})
       </button>
