@@ -77,12 +77,23 @@ export default function PlantsPage() {
       {/* ✅ SEARCH BAR */}
       <div className="flex justify-center mb-6 px-4">
         <input
-          type="text"
-          placeholder="Search plants..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-xl px-5 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-700"
-        />
+  type="text"
+  placeholder="Search plants... 🌿"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="
+    w-full max-w-xl px-5 py-3
+    rounded-full
+    border border-gray-400
+    bg-white
+    text-gray-900
+    placeholder:text-gray-500
+    shadow-md
+    focus:outline-none
+    focus:ring-2 focus:ring-green-700
+    focus:border-green-700
+  "
+/>
       </div>
 
       {/* CATEGORY */}
